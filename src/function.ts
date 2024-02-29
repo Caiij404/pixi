@@ -1,6 +1,6 @@
 //@ts-nocheck
 import * as PIXI from 'pixi.js'
-
+let n = 100;
 export function createGraphics(stage: PIXI.Container<PIXI.DisplayObject>){
     const graphics = new PIXI.Graphics();
 	graphics.lineStyle(2, 0xb1b1b1, 1);
@@ -50,6 +50,14 @@ export function sweepHeight(stage: PIXI.Container<PIXI.DisplayObject>, num: numb
 	text.position.set(445,-150);
 	stage.addChild(text);
 
+	window.addEventListener('keydown',(e)=>{
+		if(e.key == '6')
+		{
+			text.text = n.toString();
+			n++;
+		}
+	})
+
 	// const textStyle = { fontFamily : "Arial", fontSize: 24, fill : "#ffffff" };
  
 	// // 创建文本对象
@@ -72,7 +80,6 @@ export function addHitArea(stage: PIXI.Container<PIXI.DisplayObject>){
 		color: 0xb1b1b1,
 		alpha: 0.8,
 		alignment: 0.5,
-		dash: [10,5],
 	});
 	rect1.pivot.set(0,50)
 	rect1.beginFill(0xffffff);
@@ -93,19 +100,19 @@ export function addHitArea(stage: PIXI.Container<PIXI.DisplayObject>){
 	stage.addChild(rect3);
 
 	// rect1.cursor = 'pointer';
-	rect1.mark = 'zoom1';
-	rect1.eventMode = 'static';
-	rect1.on('pointerdown',(e)=>{
-		console.log('rect1 pointerdown')
+	// rect1.mark = 'zoom1';
+	// rect1.eventMode = 'static';
+	// rect1.on('pointerdown',(e)=>{
+	// 	console.log('rect1 pointerdown')
 
-	},rect1);
+	// },rect1);
 
-	rect1.addEventListener('pointerdown',(e)=>{
-		console.log('rect1')
-		// rect1.destroy();
-		rect1.alpha = 0;
-		console.log(rect1.mark);
-	})
+	// rect1.addEventListener('pointerdown',(e)=>{
+	// 	console.log('rect1')
+	// 	// rect1.destroy();
+	// 	rect1.alpha = 0;
+	// 	console.log(rect1.mark);
+	// })
 
 	// rect1.addEventListener('pointerenter',(e)=>{
 

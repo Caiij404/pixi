@@ -4,45 +4,49 @@
 </template>
 
 <script setup lang="ts">
-import * as PIXI from "pixi.js"
-import {addHitArea, createGraphics, createLine, sweepHeight} from './function'
-const app = new PIXI.Application({
-	width: window.innerWidth,
-	height: window.innerHeight,
-	backgroundColor: 0xffffff,
-	resolution: window.devicePixelRatio | 1,
-	resizeTo: window,
-});
+// import * as PIXI from "pixi.js"
+// import {addHitArea, createGraphics, createLine, sweepHeight} from './function'
+// const app = new PIXI.Application({
+// 	width: window.innerWidth,
+// 	height: window.innerHeight,
+// 	backgroundColor: 0xffffff,
+// 	resolution: window.devicePixelRatio | 1,
+// 	resizeTo: window,
+// });
 
-document.body.appendChild(app.view as any);
+import { SweepEditorUI } from "./SweepEditorUI";
 
-app.stage.position.set(window.innerWidth / 2, window.innerHeight / 2);
+// document.body.appendChild(app.view as any);
 
-window.addEventListener('wheel',(e)=>{
-	const step = e.deltaY < 0 ? 0.03 : -0.03;
-	if(app.stage.scale.x + step >= 0.03)
-	{
-		app.stage.scale.x += step;
-		app.stage.scale.y += step;
-	}
-});
+// app.stage.position.set(window.innerWidth / 2, window.innerHeight / 2);
 
-// 画图形
-createGraphics(app.stage);
+// window.addEventListener('wheel',(e)=>{
+// 	const step = e.deltaY < 0 ? 0.03 : -0.03;
+// 	if(app.stage.scale.x + step >= 0.03)
+// 	{
+// 		app.stage.scale.x += step;
+// 		app.stage.scale.y += step;
+// 	}
+// });
 
-// 画数字
-sweepHeight(app.stage, 200);
+// // 画图形
+// createGraphics(app.stage);
 
-// 区域
-addHitArea(app.stage);
+// // 画数字
+// sweepHeight(app.stage, 200);
+
+// // 区域
+// addHitArea(app.stage);
+
+SweepEditorUI.get();
 
 // createLine(app.stage);
-window.addEventListener('keydown',(e)=>{
-	if(e.key == '8')
-	{
-		createLine(app.stage);
-	}
-})
+// window.addEventListener('keydown',(e)=>{
+// 	if(e.key == '8')
+// 	{
+// 		createLine(app.stage);
+// 	}
+// })
 
 
 // 禁止右键菜单

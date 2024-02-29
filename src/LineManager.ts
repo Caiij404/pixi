@@ -41,7 +41,7 @@ export class LineManager{
     {
         for(let i=0; i<this.lines.length; ++i)
         {
-            if(this.lines[i].id === id)
+            if(this.lines[i].id === id && !this.lines[i].destroyed)
             {
                 this.lines[i].destroy();
                 this.lines.splice(i,1);

@@ -1,5 +1,12 @@
 import * as PIXI from 'pixi.js';
 import { LineManager } from './LineManager';
+import { StatusManager } from './StatusManager';
+
+type Size = {
+    w: number;
+    h: number;
+}
+
 
 export class SweepEditorUI{
     private static instance: SweepEditorUI;
@@ -11,6 +18,7 @@ export class SweepEditorUI{
     private hitArea: PIXI.Container<PIXI.Graphics>;
 
     public lineManager: LineManager;
+    public statusManager: StatusManager;
 
     private constructor(){
         this.app = new PIXI.Application({
@@ -36,6 +44,8 @@ export class SweepEditorUI{
 
         this.lineManager = LineManager.get();
         this.lineManager.initStage(this.stage);
+
+        this.statusManager = StatusManager.get();
 
     }
 
@@ -106,39 +116,68 @@ export class SweepEditorUI{
 
     private createHitArea(): PIXI.Container<PIXI.Graphics>{
         let areas = new PIXI.Container<PIXI.Graphics>();
+        const area1 = this.createArea('zone1');
+        areas.addChild(area1);
+        
+        const area2 = this.createArea('zone2');
+        areas.addChild(area2);
 
-        const rect1 = new PIXI.Graphics();
-        //@ts-ignore
-        rect1.mark = 'zone2';
-        rect1.lineStyle({
-            width: 2,
-            color: 0xb1b1b1,
-            alpha: 0.8,
-            alignment: 0.5,
-        });
-        rect1.pivot.set(0,50)
-        rect1.beginFill(0xffffff);
-        rect1.drawRect(0,0,80,50);
-        rect1.endFill();
-        areas.addChild(rect1);
-    
-        const rect2 = rect1.clone();
-        rect2.pivot.set(80,0);
-        //@ts-ignore
-        rect2.mark = 'zone1';
-        areas.addChild(rect2);
-    
-        const rect3 = new PIXI.Graphics();
-        rect3.lineStyle(2, 0xb1b1b1, 1);
-        rect3.pivot.set(0,300);
-        rect3.beginFill(0xffffff);
-        rect3.drawRect(0,0,80,80);
-        rect3.endFill();
-        //@ts-ignore
-        rect3.mark = 'zone3';
-        areas.addChild(rect3);
+        const area3 = this.createArea('zone3');
+        areas.addChild(area3);
 
         return areas;
+    }
+
+    private createArea(mark: string):PIXI.Graphics{
+        const area = new PIXI.Graphics();
+        //@ts-ignore
+        area.mark = mark;
+        area.lineStyle(2, 0xb1b1b1, 1);
+        let size = [0,0];
+        if(mark == 'zone1')
+        {
+            area.pivot.set(80,0);
+            size = [80,50];
+        }
+        else if(mark == 'zone2')
+        {
+            area.pivot.set(0,50);
+            size = [80,50];
+        }
+        else if(mark == 'zone3')
+        {
+            area.pivot.set(0,300);
+            size = [80,80];
+        }
+
+        area.beginFill(0xffffff);
+        area.drawRect(0,0,size[0],size[1]);
+        area.endFill();
+
+        // @ts-ignore
+        area.eventMode = 'static';
+        
+        const pointerOver = ()=>{
+            this.statusManager.setHoverZone(mark);
+            console.log(mark, 'over')
+        }
+        const pointerOut = ()=>{
+            this.statusManager.setHoverZone();
+            console.log(mark, 'out');
+        }
+        const onClick = ()=>{
+            console.log(mark, 'onClick');
+        }
+
+        // @ts-ignore
+        area.on('pointerover',pointerOver,area);
+        // @ts-ignore
+        area.on('pointerout',pointerOut,area);
+        // @ts-ignore
+        area.on('pointerdown',onClick,area);
+
+        
+        return area;
     }
 
 }

@@ -14,6 +14,9 @@
 // 	resizeTo: window,
 // });
 
+// const test = new PIXI.Sprite();
+// test.on
+
 import { SweepEditorUI } from "./SweepEditorUI";
 
 // document.body.appendChild(app.view as any);

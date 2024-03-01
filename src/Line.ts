@@ -9,6 +9,10 @@ export class Line{
     private creatingMotion: any;
     private button2CancelCreate: any;
     private keyCancelCreate: any;
+
+    private onDragStart: (e: MouseEvent) => void;
+    private onDragMove: (e: MouseEvent) => void;
+    private onDragEnd: (e: MouseEvent) => void;
     constructor(){
         const texture = PIXI.Texture.from('./line.jpg');
         this.line = new PIXI.Sprite(texture);
@@ -18,6 +22,28 @@ export class Line{
         this.line.eventMode = 'none';
         this.id = GUID.toString();
         GUID++;
+
+        this.onDragStart = (e: MouseEvent)=>{
+            if(this.line.destroyed)
+                return ;
+            // @ts-ignore
+            this.line.on('pointerMove',this.onDragMove,this.line)
+            this.line.alpha = 0.5;
+        }
+
+        this.onDragMove = (e: MouseEvent)=>{
+            if(this.line.destroyed)
+                return;
+
+            this.line.position.set(e.clientX, e.clientY);
+        }
+
+        this.onDragEnd = (e: MouseEvent)=>{
+            if(this.line.destroyed)
+                return ;
+            // @ts-ignore
+            this.line.off('pointerMove',this.onDragMove,this.line)
+        }
 
     }
     get position():PIXI.IPointData{
@@ -48,6 +74,9 @@ export class Line{
         oldy *= 0.55;
         this.line.texture = PIXI.Texture.from('./line1.jpg')
         this.setScale(oldx, oldy);
+        
+        // @ts-ignore
+        this.line.on('pointerdown',this.onDragStart,this.line);
     }
 
     get destroyed():boolean{

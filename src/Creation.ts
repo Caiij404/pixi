@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { Line } from "./Line";
 import { LineManager } from "./LineManager";
+import { StatusManager } from './StatusManager';
 
 export class Creation{
     private static instance: Creation;
@@ -16,16 +17,34 @@ export class Creation{
         this._mouseMoveListenerEvent = (e: MouseEvent) => {
             if(!this._creating)
                 return ;
+            let mousePoint = [e.clientX, e.clientY];
+            let original = [window.innerWidth / 2, window.innerHeight / 2];
+            let move = [mousePoint[0] - original[0], mousePoint[1] - original[1]];
+            if(this.line && !this.line.destroyed)
+            {
+                this.line.translate(move[0], move[1]);
+            }
 
         }
 
         this._mouseDownListenerEvent = (e: MouseEvent) => {
-            if(!this._creating)
-                return ;
+            
         }
 
         this._mouseUpListenerEvent = (e: MouseEvent) => {
-            this.removeListenEvent();
+            let button = e.button;
+            if(button == 0)
+            {
+                let zone = StatusManager.get().getHoverZone();
+                if(zone == 'zone1' || zone == 'zone2' || zone == 'zone3')
+                {
+                    this.confirm(zone);
+                }
+            }
+            else if(button == 2)
+            {
+                this.end();
+            }
         }
 
         this._keyDownListenerEvent = (e: KeyboardEvent) => {
@@ -34,11 +53,7 @@ export class Creation{
 
             if(e.key == 'Escape')
             {
-                if(this.line)
-                {
-                    LineManager.get().cancelCreate(this.line);
-                    this.line = undefined;
-                }
+                this.end();
             }
         }
     }
@@ -66,17 +81,30 @@ export class Creation{
     }
 
     start(){
+        this._creating = true;
         this.line = LineManager.get().createLine();
         this.addListenEvent();
     }
 
     end(){
-
+        if(this._creating && this.line)
+        {
+            LineManager.get().cancelCreate(this.line);
+            this.line = undefined;
+        }
+        this._creating = false;
         this.removeListenEvent();
     }
 
-    confirm(){
+    confirm(zone: string){
+        if(!this._creating || !this.line)
+            return ;
+        if(zone == 'zone1')
+        {
+            this.line.confirmCreate();
+        }
 
+        this._creating = false;
         this.removeListenEvent();
     }
 }

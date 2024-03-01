@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { LineManager } from './LineManager';
 import { StatusManager } from './StatusManager';
+import { Creation } from './Creation';
 
 type Size = {
     w: number;
@@ -56,6 +57,12 @@ export class SweepEditorUI{
 
         this.statusManager = StatusManager.get();
 
+        window.addEventListener('keydown',(e)=>{
+            if(e.key == '8')
+            {
+                Creation.get().start();
+            }
+        })
     }
 
     public static get(): SweepEditorUI{

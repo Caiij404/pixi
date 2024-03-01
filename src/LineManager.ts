@@ -6,13 +6,6 @@ export class LineManager{
     private stage: PIXI.Container<PIXI.DisplayObject> | undefined
     private lines: Line[] = [];
     private constructor(){
-        window.addEventListener('keydown',(e)=>{
-            if(e.key == '8')
-            {
-                let line = new Line();
-                this.addLine(line);
-            }
-        });
     }
     
     public static get(): LineManager

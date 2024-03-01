@@ -30,6 +30,15 @@ export class SweepEditorUI{
         });
         document.body.appendChild(this.app.view as any);
 
+        // window.addEventListener('wheel',(e)=>{
+        // 	const step = e.deltaY < 0 ? 0.03 : -0.03;
+        // 	if(this.stage.scale.x + step >= 0.03)
+        // 	{
+        // 		this.stage.scale.x += step;
+        // 		this.stage.scale.y += step;
+        // 	}
+        // });
+
         this.stage = this.app.stage;
         this.stage.position.set(window.innerWidth / 2, window.innerHeight / 2);
 

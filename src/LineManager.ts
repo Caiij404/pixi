@@ -24,8 +24,21 @@ export class LineManager{
         return this.instance;
     }
 
-    public initStage(stage: PIXI.Container<PIXI.DisplayObject>){
+    public initStage(stage: PIXI.Container<PIXI.DisplayObject>)
+    {
         this.stage = stage;
+    }
+
+    createLine(): Line
+    {
+        let line = new Line();
+        this.addLine(line);
+        return line;
+    }
+
+    cancelCreate(line: Line)
+    {
+        this.deleteLine(line.id);
     }
 
     addLine(l: Line)

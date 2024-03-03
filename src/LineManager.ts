@@ -1,6 +1,9 @@
 import * as PIXI from 'pixi.js';
 import { Line } from "./Line";
 
+// LineManager 不需要lines数组，因为剖面编辑也就3个区域，在画布中最多也就三个线条
+// 那对应的zone也就只需要三个，其实可以另外写成一个manager，会方便些吧
+
 export class LineManager{
     private static instance: LineManager;
     private stage: PIXI.Container<PIXI.DisplayObject> | undefined

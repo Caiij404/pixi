@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 export class PixiGraphics {
     private static instance: PixiGraphics;
     private constructor() {
-        (<any>PIXI.Graphics.prototype).drawDashLine = function (toX: number, toY: number, dash = 16, gap = 8) {
+        (<any>PIXI.Graphics.prototype).drawDashLine = function (toX: number, toY: number, dash = 6, gap = 3) {
             const lastPosition = this.currentPath.points;
 
             const currentPosition = {
@@ -52,7 +52,7 @@ export class PixiGraphics {
         return this.instance;
     }
 
-    drawDashRectangle(x: number, y: number, width: number, height: number, lineStyle?: PIXI.LineStyle): PIXI.Graphics {
+    drawDashRectangle(x: number, y: number, width: number, height: number, lineStyle?: any): PIXI.Graphics {
 
         const rect = new PIXI.Graphics();
 

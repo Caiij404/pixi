@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 // import * as PIXI from "pixi.js"
+// import { PixiGraphics } from "./PixiGraphics";
 // import {addHitArea, createGraphics, createLine, sweepHeight} from './function'
 // const app = new PIXI.Application({
 // 	width: window.innerWidth,
@@ -18,6 +19,7 @@
 // test.on
 
 import { SweepEditorUI } from "./SweepEditorUI";
+SweepEditorUI.get();
 
 // document.body.appendChild(app.view as any);
 
@@ -41,7 +43,6 @@ import { SweepEditorUI } from "./SweepEditorUI";
 // // 区域
 // addHitArea(app.stage);
 
-SweepEditorUI.get();
 
 // createLine(app.stage);
 // window.addEventListener('keydown',(e)=>{
@@ -50,6 +51,9 @@ SweepEditorUI.get();
 // 		createLine(app.stage);
 // 	}
 // })
+
+// let rect = PixiGraphics.get().drawDashRectangle(0,0,100,100);
+// app.stage.addChild(rect as any);
 
 
 // 禁止右键菜单

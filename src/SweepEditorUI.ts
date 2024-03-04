@@ -2,12 +2,8 @@ import * as PIXI from 'pixi.js';
 import { LineManager } from './LineManager';
 import { StatusManager } from './StatusManager';
 import { Creation } from './Creation';
-
-type Size = {
-    w: number;
-    h: number;
-}
-
+import { ZoneManager } from './ZoneManager';
+import { Zone } from './Zone';
 
 export class SweepEditorUI{
     private static instance: SweepEditorUI;
@@ -16,7 +12,7 @@ export class SweepEditorUI{
     private baseGraphics: PIXI.Container;
     private heightText: PIXI.Text;
     private height: number = 200;
-    private hitArea: PIXI.Container<PIXI.Graphics>;
+    // private hitArea: PIXI.Container<PIXI.Graphics>;
 
     public lineManager: LineManager;
     public statusManager: StatusManager;
@@ -49,8 +45,14 @@ export class SweepEditorUI{
         this.heightText = this.createSweepHeight();
         this.stage.addChild(this.heightText);
 
-        this.hitArea = this.createHitArea();
-        this.stage.addChild(this.hitArea);
+        // this.hitArea = this.createHitArea();
+        // this.stage.addChild(this.hitArea);
+
+        const zoneManager = new ZoneManager(this.stage);
+
+        const zone1 = new Zone('zone3');
+        this.stage.addChild(zone1.getZone());
+
 
         this.lineManager = LineManager.get();
         this.lineManager.initStage(this.stage);

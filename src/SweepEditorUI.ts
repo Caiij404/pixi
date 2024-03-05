@@ -12,6 +12,10 @@ export class SweepEditorUI{
     private baseGraphics: PIXI.Container;
     private heightText: PIXI.Text;
     private height: number = 200;
+    private zone1: Zone;
+    private zone2: Zone;
+    private zone3: Zone;
+
     // private hitArea: PIXI.Container<PIXI.Graphics>;
 
     public lineManager: LineManager;
@@ -37,7 +41,7 @@ export class SweepEditorUI{
         // });
 
         this.stage = this.app.stage;
-        this.stage.position.set(window.innerWidth / 2, window.innerHeight / 2);
+        this.stage.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
 
         this.baseGraphics = this.createGraphics();
         this.stage.addChild(this.baseGraphics);
@@ -48,11 +52,16 @@ export class SweepEditorUI{
         // this.hitArea = this.createHitArea();
         // this.stage.addChild(this.hitArea);
 
-        const zoneManager = new ZoneManager(this.stage);
+        // const zoneManager = new ZoneManager(this.stage);
 
-        const zone1 = new Zone('zone3');
-        this.stage.addChild(zone1.getZone());
+        this.zone1 = new Zone('zone1');
+        this.stage.addChild(this.zone1.getZone());
 
+        this.zone2 = new Zone('zone2');
+        this.stage.addChild(this.zone2.getZone());
+
+        this.zone3 = new Zone('zone3');
+        this.stage.addChild(this.zone3.getZone());
 
         this.lineManager = LineManager.get();
         this.lineManager.initStage(this.stage);

@@ -5,6 +5,9 @@ import { StatusManager } from './StatusManager';
 const showAlpha = 1;
 const hideAlpha = 0;
 
+const lineStyle_Width = 1;
+const textString = '添加角线区域';
+
 type info = {size: [number,number], pivot: [number, number], color: number}
 
 export class Zone{
@@ -13,6 +16,7 @@ export class Zone{
     private range: PIXI.Graphics;
     private zone: PIXI.Container;
     public mark: string;
+    private text: PIXI.Text;
 
     private statusManager: StatusManager;
 
@@ -23,10 +27,25 @@ export class Zone{
         this.dashZone = this.createDashZone();
         this.range = this.createRange();
 
+        this.text = this.createText();
+
         this.zone = new PIXI.Container();
-        this.zone.addChild(this.invisibleZone)
-        this.zone.addChild(this.dashZone)
-        this.zone.addChild(this.range)
+        this.zone.addChild(this.text);
+        this.zone.addChild(this.invisibleZone);
+        this.zone.addChild(this.dashZone);
+        this.zone.addChild(this.range);
+        this.hideRange();
+
+        // window.addEventListener('keydown',(e)=>{
+        //     if(e.key == '2')
+        //     {
+        //         this.showDashZone()
+        //     }
+        //     else if(e.key == '3')
+        //     {
+        //         this.hideDashZone()
+        //     }
+        // })
     }
 
     createInvisibleZone(): PIXI.Graphics{
@@ -85,7 +104,7 @@ export class Zone{
         let pivot = info.pivot;
         let color = info.color;
         let style: any = {
-            width: 2,
+            width: lineStyle_Width,
             color: color,
             alpha: showAlpha,
         }
@@ -106,7 +125,7 @@ export class Zone{
         let pivot = info.pivot;
         let color = info.color;
         let style: any = {
-            width: 2,
+            width: lineStyle_Width,
             color: color,
             alpha: showAlpha,
         }
@@ -116,6 +135,41 @@ export class Zone{
         return range;
     }
 
+    createText(): PIXI.Text{
+
+        let color = '#b1b1b1'
+
+        switch(this.mark)
+        {
+            case 'zone1':
+                {
+                    color = '#ff5436'
+                    break;
+                }
+            case 'zone2':
+                {
+                    color = '#a999ff'
+                    break;
+                }
+            case 'zone3':
+                {
+                    color = '#0acca2';
+                    break;
+                }
+        }
+        const style = {
+            fontSize: 13,
+            fill: color
+        }
+        const text = new PIXI.Text(textString, style);
+        let info = this.getZoneInfo();
+        let size = info.size;
+        let pivot = info.pivot;
+        text.pivot.set(pivot[0], pivot[1] - (size[1] / 2) + 13 / 2);
+        text.resolution = 3;
+        return text
+    }
+
     getZone():PIXI.Container{
         return this.zone;
     }
@@ -123,10 +177,12 @@ export class Zone{
 
     showDashZone(){
         this.dashZone.alpha = showAlpha;
+        this.text.alpha = showAlpha;
     }
 
     hideDashZone(){
         this.dashZone.alpha = hideAlpha;
+        this.text.alpha = hideAlpha;
     }
 
     showRange(){
@@ -144,14 +200,17 @@ export class Zone{
         if (this.mark == 'zone1') {
             p = [80, 0];
             s = [80, 50];
+            c = color1;
         }
         else if (this.mark == 'zone2') {
             p = [0, 50];
             s = [80, 50];
+            c = color2;
         }
         else if (this.mark == 'zone3') {
             p = [0, 300];
             s = [80, 80];
+            c = color3;
         }
         return {size: [s[0],s[1]], pivot: [p[0], p[1]], color: c};
     }
@@ -161,14 +220,21 @@ export class Zone{
         let p = [0, 0];
         let c = 0xb1b1b1;
         if (this.mark == 'zone1') {
+            c = color1;
             p = [200 + 80, 200];
         }
         else if (this.mark == 'zone2') {
+            c = color2;
             p = [200, 200];
         }
         else if (this.mark == 'zone3') {
+            c = color3;
             p = [200, 200 + 300];
         }
         return {size: [s[0],s[1]], pivot: [p[0], p[1]], color: c};
     }
 }
+
+const color1 = 0xff5436;
+const color2 = 0xa999ff;
+const color3 = 0x0acca2;

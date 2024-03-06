@@ -81,6 +81,7 @@ export class Creation{
     }
 
     start(){
+        if(this._creating) return ;
         this._creating = true;
         this.line = LineManager.get().createLine();
         this.addListenEvent();
@@ -101,7 +102,7 @@ export class Creation{
             return ;
         if(zone == 'zone1')
         {
-            this.line.confirmCreate();
+            this.line.confirmCreate(zone);
         }
 
         this._creating = false;

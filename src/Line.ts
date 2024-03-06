@@ -1,14 +1,13 @@
 import * as PIXI from 'pixi.js'
+import { EditorService } from './EditorService';
 
 let GUID = 11044766;
 
 export class Line{
     private line: PIXI.Sprite
     public status: 'creating' | 'created' = 'creating'
-    public id: string;
-    private creatingMotion: any;
-    private button2CancelCreate: any;
-    private keyCancelCreate: any;
+    public id: string = '';
+    public zoneMark = '';
 
     private onDragStart: (e: MouseEvent) => void;
     private onDragMove: (e: MouseEvent) => void;
@@ -20,14 +19,14 @@ export class Line{
         this.line.scale.set(0.5,0.5)
         // @ts-ignore
         this.line.eventMode = 'none';
-        this.id = GUID.toString();
-        GUID++;
+        // @ts-ignore
+        this.line.hitArea = EditorService.get().getApp().screen;
 
         this.onDragStart = (e: MouseEvent)=>{
             if(this.line.destroyed)
                 return ;
             // @ts-ignore
-            this.line.on('pointerMove',this.onDragMove,this.line)
+            this.line.on('pointermove',this.onDragMove,this.line)
             this.line.alpha = 0.5;
         }
 
@@ -35,14 +34,21 @@ export class Line{
             if(this.line.destroyed)
                 return;
 
-            this.line.position.set(e.clientX, e.clientY);
+            // this.line.position.set(e.clientX, e.clientY);
+            let mousePoint = [e.clientX, e.clientY];
+            let original = [window.innerWidth / 2, window.innerHeight / 2];
+            let move = [mousePoint[0] - original[0], mousePoint[1] - original[1]];
+            if(this.line && !this.line.destroyed)
+            {
+                this.line.position.set(move[0], move[1]);
+            }
         }
 
-        this.onDragEnd = (e: MouseEvent)=>{
+        this.onDragEnd = (/* e: MouseEvent */)=>{
             if(this.line.destroyed)
                 return ;
             // @ts-ignore
-            this.line.off('pointerMove',this.onDragMove,this.line)
+            this.line.off('pointermove',this.onDragMove,this.line)
         }
 
     }
@@ -65,7 +71,7 @@ export class Line{
         }
     }
 
-    confirmCreate(){
+    confirmCreate(mark: string){
 
         let lSprite = this.getSprite();
         let oldx = lSprite.scale.x;
@@ -74,7 +80,12 @@ export class Line{
         oldy *= 0.55;
         this.line.texture = PIXI.Texture.from('./line1.jpg')
         this.setScale(oldx, oldy);
+
+        this.zoneMark = mark;
         
+        // 这个eventMode老是会忘
+        // @ts-ignore
+        this.line.eventMode = 'static'
         // @ts-ignore
         this.line.on('pointerdown',this.onDragStart,this.line);
     }

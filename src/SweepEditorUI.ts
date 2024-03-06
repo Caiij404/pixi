@@ -2,8 +2,8 @@ import * as PIXI from 'pixi.js';
 import { LineManager } from './LineManager';
 import { StatusManager } from './StatusManager';
 import { Creation } from './Creation';
-import { ZoneManager } from './ZoneManager';
 import { Zone } from './Zone';
+import { EditorService } from './EditorService';
 
 export class SweepEditorUI{
     private static instance: SweepEditorUI;
@@ -16,7 +16,6 @@ export class SweepEditorUI{
     private zone2: Zone;
     private zone3: Zone;
 
-    // private hitArea: PIXI.Container<PIXI.Graphics>;
 
     public lineManager: LineManager;
     public statusManager: StatusManager;
@@ -40,8 +39,14 @@ export class SweepEditorUI{
         // 	}
         // });
 
+        EditorService.get().initApp(this.app);
+
         this.stage = this.app.stage;
         this.stage.position.set(this.app.screen.width / 2, this.app.screen.height / 2);
+
+
+        //@ts-ignore
+        this.stage.eventMode = 'static';
 
         this.baseGraphics = this.createGraphics();
         this.stage.addChild(this.baseGraphics);
@@ -141,70 +146,5 @@ export class SweepEditorUI{
         this.heightText.text = n.toString();
     }
 
-    private createHitArea(): PIXI.Container<PIXI.Graphics>{
-        let areas = new PIXI.Container<PIXI.Graphics>();
-        const area1 = this.createArea('zone1');
-        areas.addChild(area1);
-        
-        const area2 = this.createArea('zone2');
-        areas.addChild(area2);
-
-        const area3 = this.createArea('zone3');
-        areas.addChild(area3);
-
-        return areas;
-    }
-
-    private createArea(mark: string):PIXI.Graphics{
-        const area = new PIXI.Graphics();
-        //@ts-ignore
-        area.mark = mark;
-        area.lineStyle(2, 0xb1b1b1, 1);
-        let size = [0,0];
-        if(mark == 'zone1')
-        {
-            area.pivot.set(80,0);
-            size = [80,50];
-        }
-        else if(mark == 'zone2')
-        {
-            area.pivot.set(0,50);
-            size = [80,50];
-        }
-        else if(mark == 'zone3')
-        {
-            area.pivot.set(0,300);
-            size = [80,80];
-        }
-
-        area.beginFill(0xffffff);
-        area.drawRect(0,0,size[0],size[1]);
-        area.endFill();
-
-        // @ts-ignore
-        area.eventMode = 'static';
-        
-        const pointerOver = ()=>{
-            this.statusManager.setHoverZone(mark);
-            console.log(mark, 'over')
-        }
-        const pointerOut = ()=>{
-            this.statusManager.setHoverZone();
-            console.log(mark, 'out');
-        }
-        const onClick = ()=>{
-            console.log(mark, 'onClick');
-        }
-
-        // @ts-ignore
-        area.on('pointerover',pointerOver,area);
-        // @ts-ignore
-        area.on('pointerout',pointerOut,area);
-        // @ts-ignore
-        area.on('pointerdown',onClick,area);
-
-        
-        return area;
-    }
 
 }

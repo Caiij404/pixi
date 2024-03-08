@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { PixiGraphics } from './PixiGraphics';
 import { EditorService } from './EditorService';
+import { ZoneManager } from './ZoneManager';
 
 let linew1 = 90;
 let lineh1 = 90
@@ -13,7 +14,7 @@ export class Line{
     private mask: PIXI.Graphics;
     private box: PIXI.Graphics;
 
-    public zoneMark = '';
+    public mark = '';
     private pointerDown: (e: MouseEvent) => void;
     private pointerUp: (e: MouseEvent) => void;
     private globalMouseMove: (e: MouseEvent) => void;
@@ -24,31 +25,27 @@ export class Line{
         this.sprite.width = linew1;
         this.sprite.height = lineh1;
 
-        let style = {
-            width: 2,
-            color: 0xff5436,
-            alpha: 1,
-        }
-        // this.box = PixiGraphics.get().drawDashRectangle(0,0,this.sprite.width,this.sprite.height,style);
-        this.box = PixiGraphics.get().drawDashRectangle(0,0,linew1,lineh1,style);
+        this.box = new PIXI.Graphics();
         
         this.container = new PIXI.Container();
         this.container.sortableChildren = true;
         this.sprite.zIndex = 2;
-        this.box.zIndex = 3;
         this.container.addChild(this.sprite);
-        this.container.addChild(this.box);
+        // this.box.zIndex = 3;
+        // this.container.addChild(this.box);
         
         this.mask = new PIXI.Graphics();
 
         this.pointerDown = (e: MouseEvent) => {
             // @ts-ignore
             this.container.on("globalmousemove",this.globalMouseMove);
+            ZoneManager.get().showRange(this.mark);
         }
 
         this.pointerUp = (e: MouseEvent) => {
             // @ts-ignore
             this.container.off('globalmousemove',this.globalMouseMove);
+            ZoneManager.get().hideRange();
         }
 
         this.globalMouseMove = (e: any)=>{
@@ -60,6 +57,25 @@ export class Line{
             let y = stage.position.y;
             mouseX -= x;
             mouseY -= y;
+
+            let range = ZoneManager.get().getMoveRange(this.mark);
+            let minx = range.minx;
+            let maxx = range.maxx;
+            let miny = range.miny;
+            let maxy = range.maxy;
+
+            if(mouseX < minx){
+                mouseX = minx;
+            }
+            if(mouseX > maxx - this.sprite.width){
+                mouseX = maxx - this.sprite.width;
+            }
+            if(mouseY < miny){
+                mouseY = miny;
+            }
+            if(mouseY > maxy - this.sprite.height){
+                mouseY = maxy - this.sprite.height;
+            }
 
             this.translate(mouseX,mouseY);
         }
@@ -82,9 +98,28 @@ export class Line{
         this.box.destroy();
         let x = this.sprite.position.x;
         let y = this.sprite.position.y;
+        let color = 0xb1b1b1;
+        switch(this.mark)
+        {
+            case 'zone1':
+                {
+                    color = 0xff5436;
+                    break;
+                }
+            case 'zone2': 
+                {
+                    color = 0xa999ff;
+                    break;
+                }
+            case 'zone3':
+                {
+                    color = 0x0acca2;
+                    break;
+                }
+        }
         let style = {
-            width: 2,
-            color: 0xff5436,
+            width: 1,
+            color: color,
             alpha: 0.8,
         }
         this.box = PixiGraphics.get().drawDashRectangle(0,0,w,h,style);
@@ -94,7 +129,7 @@ export class Line{
     }
 
     confirmCreate(mark: string){
-        this.zoneMark = mark;
+        this.mark = mark;
 
         this.sprite.width = linew2;
         this.sprite.height = lineh2;

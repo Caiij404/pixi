@@ -10,6 +10,8 @@ const textString = '添加角线区域';
 
 type info = {size: [number,number], pivot: [number, number], color: number}
 
+export type moveRange = {minx:number ,maxx: number, miny: number, maxy: number}
+
 export class Zone{
     private invisibleZone: PIXI.Graphics;
     private dashZone: PIXI.Graphics;
@@ -35,17 +37,6 @@ export class Zone{
         this.zone.addChild(this.dashZone);
         this.zone.addChild(this.range);
         this.hideRange();
-
-        // window.addEventListener('keydown',(e)=>{
-        //     if(e.key == '2')
-        //     {
-        //         this.showDashZone()
-        //     }
-        //     else if(e.key == '3')
-        //     {
-        //         this.hideDashZone()
-        //     }
-        // })
     }
 
     createInvisibleZone(): PIXI.Graphics{
@@ -232,6 +223,16 @@ export class Zone{
             p = [200, 200 + 300];
         }
         return {size: [s[0],s[1]], pivot: [p[0], p[1]], color: c};
+    }
+
+    getMoveRange():moveRange{
+        let info = this.getRangeInfo();
+        let size = info.size;
+        let pivot = info.pivot;
+
+        let leftTop = {x: -pivot[0], y: -pivot[1]}
+        let rightBottom = {x: size[0] - pivot[0], y: size[1] - pivot[1]}
+        return {minx: leftTop.x, miny: leftTop.y, maxx: rightBottom.x, maxy: rightBottom.y};
     }
 }
 

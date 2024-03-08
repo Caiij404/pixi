@@ -3,6 +3,7 @@ import { StatusManager } from './StatusManager';
 import { Creation } from './Creation';
 import { Zone } from './Zone';
 import { EditorService } from './EditorService';
+import { ZoneManager } from './ZoneManager';
 
 export class SweepEditorUI{
     private static instance: SweepEditorUI;
@@ -11,9 +12,6 @@ export class SweepEditorUI{
     private baseGraphics: PIXI.Container;
     private heightText: PIXI.Text;
     private height: number = 200;
-    private zone1: Zone;
-    private zone2: Zone;
-    private zone3: Zone;
 
     public statusManager: StatusManager;
 
@@ -37,6 +35,8 @@ export class SweepEditorUI{
         // 	}
         // });
 
+        // @ts-ignore
+        this.app.stage.name = 'app.stage'
         EditorService.get().initApp(this.app);
 
         this.stage = this.app.stage;
@@ -52,19 +52,7 @@ export class SweepEditorUI{
         this.heightText = this.createSweepHeight();
         this.stage.addChild(this.heightText);
 
-        // this.hitArea = this.createHitArea();
-        // this.stage.addChild(this.hitArea);
-
-        // const zoneManager = new ZoneManager(this.stage);
-
-        this.zone1 = new Zone('zone1');
-        this.stage.addChild(this.zone1.getZone());
-
-        this.zone2 = new Zone('zone2');
-        this.stage.addChild(this.zone2.getZone());
-
-        this.zone3 = new Zone('zone3');
-        this.stage.addChild(this.zone3.getZone());
+        ZoneManager.get();
 
         this.statusManager = StatusManager.get();
 

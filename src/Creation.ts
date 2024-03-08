@@ -1,6 +1,6 @@
-import * as PIXI from 'pixi.js'
 import { Line } from "./Line";
 import { StatusManager } from './StatusManager';
+import { EditorService } from './EditorService';
 
 export class Creation{
     private static instance: Creation;
@@ -10,14 +10,15 @@ export class Creation{
     private _mouseUpListenerEvent: (e: MouseEvent) => void;
     private _keyDownListenerEvent: (e: KeyboardEvent) => void;
     private line: Line | undefined;
-    private lastPoint: PIXI.IPointData = {x:0, y:0};
 
     private constructor(){
         this._mouseMoveListenerEvent = (e: MouseEvent) => {
             if(!this._creating)
                 return ;
             let mousePoint = [e.clientX, e.clientY];
-            let original = [window.innerWidth / 2, window.innerHeight / 2];
+            // let original = [window.innerWidth / 2, window.innerHeight / 2];
+            let stage = EditorService.get().getStage();
+            let original = [stage.x, stage.y]
             let move = [mousePoint[0] - original[0], mousePoint[1] - original[1]];
             if(this.line && !this.line.destroyed)
             {
@@ -38,6 +39,10 @@ export class Creation{
                 if(zone == 'zone1' || zone == 'zone2' || zone == 'zone3')
                 {
                     this.confirm(zone);
+                }
+                else 
+                {
+                    this.end();
                 }
             }
             else if(button == 2)
@@ -99,7 +104,7 @@ export class Creation{
     confirm(zone: string){
         if(!this._creating || !this.line)
             return ;
-        if(zone == 'zone1')
+        // if(zone == 'zone1')
         {
             this.line.confirmCreate(zone);
         }

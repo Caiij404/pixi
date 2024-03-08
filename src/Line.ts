@@ -3,12 +3,14 @@ import { PixiGraphics } from './PixiGraphics';
 import { EditorService } from './EditorService';
 import { ZoneManager } from './ZoneManager';
 
+let GUID = 11044766;
 let linew1 = 90;
 let lineh1 = 90
 let linew2 = 25;
 let lineh2 = 50;
 
 export class Line{
+    private id: string = '';
     private container: PIXI.Container;
     private sprite: PIXI.Sprite;
     private mask: PIXI.Graphics;
@@ -27,6 +29,9 @@ export class Line{
 
         this.box = new PIXI.Graphics();
         
+        this.id = GUID.toString()
+        GUID++;
+
         this.container = new PIXI.Container();
         this.container.sortableChildren = true;
         this.sprite.zIndex = 2;
@@ -128,13 +133,22 @@ export class Line{
         this.box.zIndex = 3
     }
 
-    confirmCreate(mark: string){
+    confirmCreate(mark: string, data?:any){
         this.mark = mark;
 
         this.sprite.width = linew2;
         this.sprite.height = lineh2;
 
         this.createDashBox(linew2,lineh2);
+
+        if(data)
+        {
+            let position: PIXI.IPointData = data.position
+            if(position)
+            {
+                this.translate(position.x, position.y);
+            }
+        }
 
         // @ts-ignore
         this.container.eventMode = 'static'
@@ -157,6 +171,6 @@ export class Line{
     }
 
     get position(): PIXI.IPointData{
-        return this.container.position.clone();
+        return this.sprite.position.clone();
     }
 }

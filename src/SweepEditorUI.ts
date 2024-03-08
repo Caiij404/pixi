@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import { LineManager } from './LineManager';
 import { StatusManager } from './StatusManager';
 import { Creation } from './Creation';
 import { Zone } from './Zone';
@@ -16,12 +15,11 @@ export class SweepEditorUI{
     private zone2: Zone;
     private zone3: Zone;
 
-
-    public lineManager: LineManager;
     public statusManager: StatusManager;
 
     private constructor(){
         this.app = new PIXI.Application({
+            antialias: true,
             width: window.innerWidth,
             height: window.innerHeight,
             backgroundColor: 0xffffff,
@@ -67,9 +65,6 @@ export class SweepEditorUI{
 
         this.zone3 = new Zone('zone3');
         this.stage.addChild(this.zone3.getZone());
-
-        this.lineManager = LineManager.get();
-        this.lineManager.initStage(this.stage);
 
         this.statusManager = StatusManager.get();
 

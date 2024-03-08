@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
 import { Line } from "./Line";
-import { LineManager } from "./LineManager";
 import { StatusManager } from './StatusManager';
 
 export class Creation{
@@ -83,14 +82,14 @@ export class Creation{
     start(){
         if(this._creating) return ;
         this._creating = true;
-        this.line = LineManager.get().createLine();
+        this.line = new Line();
         this.addListenEvent();
     }
 
     end(){
         if(this._creating && this.line)
         {
-            LineManager.get().cancelCreate(this.line);
+            this.line.destroy();
             this.line = undefined;
         }
         this._creating = false;

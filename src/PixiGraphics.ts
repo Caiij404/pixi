@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 export class PixiGraphics {
     private static instance: PixiGraphics;
     private constructor() {
-        (<any>PIXI.Graphics.prototype).drawDashLine = function (toX: number, toY: number, dash = 6, gap = 3) {
+        (<any>PIXI.Graphics.prototype).drawDashLine = function (toX: number, toY: number, dash = 8, gap = 4) {
             const lastPosition = this.currentPath.points;
 
             const currentPosition = {

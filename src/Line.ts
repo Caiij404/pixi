@@ -1,96 +1,127 @@
-import * as PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js';
+import { PixiGraphics } from './PixiGraphics';
 import { EditorService } from './EditorService';
 
-let GUID = 11044766;
+let linew1 = 90;
+let lineh1 = 90
+let linew2 = 25;
+let lineh2 = 50;
 
 export class Line{
-    private line: PIXI.Sprite
-    public status: 'creating' | 'created' = 'creating'
-    public id: string = '';
+    private container: PIXI.Container;
+    private sprite: PIXI.Sprite;
+    private mask: PIXI.Graphics;
+    private box: PIXI.Graphics;
+
     public zoneMark = '';
+    private pointerDown: (e: MouseEvent) => void;
+    private pointerUp: (e: MouseEvent) => void;
+    private globalMouseMove: (e: MouseEvent) => void;
 
-    private onDragStart: (e: MouseEvent) => void;
-    private onDragMove: (e: MouseEvent) => void;
-    private onDragEnd: (e: MouseEvent) => void;
-    constructor(){
-        const texture = PIXI.Texture.from('./line.jpg');
-        this.line = new PIXI.Sprite(texture);
-        this.line.anchor.set(0.5);
-        this.line.scale.set(0.5,0.5)
-        // @ts-ignore
-        this.line.eventMode = 'none';
-        // @ts-ignore
-        this.line.hitArea = EditorService.get().getApp().screen;
+    constructor(url: string = './line.jpg'){
+        let texture = PIXI.Texture.from(url)
+        this.sprite = new PIXI.Sprite(texture);
+        this.sprite.width = linew1;
+        this.sprite.height = lineh1;
 
-        this.onDragStart = (e: MouseEvent)=>{
-            if(this.line.destroyed)
-                return ;
+        let style = {
+            width: 2,
+            color: 0xff5436,
+            alpha: 1,
+        }
+        // this.box = PixiGraphics.get().drawDashRectangle(0,0,this.sprite.width,this.sprite.height,style);
+        this.box = PixiGraphics.get().drawDashRectangle(0,0,linew1,lineh1,style);
+        
+        this.container = new PIXI.Container();
+        this.container.sortableChildren = true;
+        this.sprite.zIndex = 2;
+        this.box.zIndex = 3;
+        this.container.addChild(this.sprite);
+        this.container.addChild(this.box);
+        
+        this.mask = new PIXI.Graphics();
+
+        this.pointerDown = (e: MouseEvent) => {
             // @ts-ignore
-            this.line.on('pointermove',this.onDragMove,this.line)
-            this.line.alpha = 0.5;
+            this.container.on("globalmousemove",this.globalMouseMove);
         }
 
-        this.onDragMove = (e: MouseEvent)=>{
-            if(this.line.destroyed)
-                return;
-
-            // this.line.position.set(e.clientX, e.clientY);
-            let mousePoint = [e.clientX, e.clientY];
-            let original = [window.innerWidth / 2, window.innerHeight / 2];
-            let move = [mousePoint[0] - original[0], mousePoint[1] - original[1]];
-            if(this.line && !this.line.destroyed)
-            {
-                this.line.position.set(move[0], move[1]);
-            }
-        }
-
-        this.onDragEnd = (/* e: MouseEvent */)=>{
-            if(this.line.destroyed)
-                return ;
+        this.pointerUp = (e: MouseEvent) => {
             // @ts-ignore
-            this.line.off('pointermove',this.onDragMove,this.line)
+            this.container.off('globalmousemove',this.globalMouseMove);
         }
 
-    }
-    get position():PIXI.IPointData{
-        return this.line.position.clone();
-    }
-    translate(x: number, y: number){
-        this.line.position.set(x, y);
-    }
-    setScale(x: number, y: number){
-        this.line.scale.set(x, y);
-    }
-    getSprite():PIXI.Sprite{
-        return this.line;
-    }
-    destroy(){
-        if(!this.line.destroyed)
-        {
-            this.line.destroy();
+        this.globalMouseMove = (e: any)=>{
+            let mouseX = e.data.global.x;
+            let mouseY = e.data.global.y;
+
+            let stage = EditorService.get().getStage();
+            let x = stage.position.x;
+            let y = stage.position.y;
+            mouseX -= x;
+            mouseY -= y;
+
+            this.translate(mouseX,mouseY);
         }
+
+        // @ts-ignore
+        this.container.on('pointerdown',this.pointerDown);
+        // @ts-ignore
+        this.container.on('pointerup',this.pointerUp);
+        // @ts-ignore
+        this.container.on('pointerupoutside',this.pointerUp)
+        
+        EditorService.get().getStage().addChild(this.container);
+    }
+
+    getLine():PIXI.Container{
+        return this.container;
+    }
+
+    createDashBox(w: number, h:number){
+        this.box.destroy();
+        let x = this.sprite.position.x;
+        let y = this.sprite.position.y;
+        let style = {
+            width: 2,
+            color: 0xff5436,
+            alpha: 0.8,
+        }
+        this.box = PixiGraphics.get().drawDashRectangle(0,0,w,h,style);
+        this.box.position.set(x,y)
+        this.container.addChild(this.box);
+        this.box.zIndex = 3
     }
 
     confirmCreate(mark: string){
-
-        let lSprite = this.getSprite();
-        let oldx = lSprite.scale.x;
-        let oldy = lSprite.scale.y;
-        oldx *= 0.2;
-        oldy *= 0.55;
-        this.line.texture = PIXI.Texture.from('./line1.jpg')
-        this.setScale(oldx, oldy);
-
         this.zoneMark = mark;
-        
-        // 这个eventMode老是会忘
+
+        this.sprite.width = linew2;
+        this.sprite.height = lineh2;
+
+        this.createDashBox(linew2,lineh2);
+
         // @ts-ignore
-        this.line.eventMode = 'static'
+        this.container.eventMode = 'static'
         // @ts-ignore
-        this.line.on('pointerdown',this.onDragStart,this.line);
+        this.container.on('pointerdown',this.pointerDown);
     }
 
     get destroyed():boolean{
-        return this.line.destroyed;
+        return this.container.destroyed;
+    }
+
+    destroy(){
+        EditorService.get().getStage().removeChild(this.container)
+        this.container.destroy();
+    }
+
+    translate(x: number, y:number){
+        this.sprite.position.set(x,y);
+        this.box.position.set(x,y);
+    }
+
+    get position(): PIXI.IPointData{
+        return this.container.position.clone();
     }
 }

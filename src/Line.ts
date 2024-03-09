@@ -2,18 +2,22 @@ import * as PIXI from 'pixi.js';
 import { PixiGraphics } from './PixiGraphics';
 import { EditorService } from './EditorService';
 import { ZoneManager } from './ZoneManager';
+import { StatusManager } from './StatusManager';
+import { EditorUtils } from './EditorUtils';
 
 let GUID = 11044766;
 let linew1 = 90;
-let lineh1 = 90
+let lineh1 = 90;
 let linew2 = 25;
 let lineh2 = 50;
+
+let maskAlpha = 0.15;
 
 export class Line{
     private id: string = '';
     private container: PIXI.Container;
     private sprite: PIXI.Sprite;
-    private mask: PIXI.Graphics;
+    private rectMask: PIXI.Graphics;
     private box: PIXI.Graphics;
 
     public mark = '';
@@ -39,7 +43,8 @@ export class Line{
         // this.box.zIndex = 3;
         // this.container.addChild(this.box);
         
-        this.mask = new PIXI.Graphics();
+        this.rectMask = new PIXI.Graphics();
+        this.updateMask();
 
         this.pointerDown = (e: MouseEvent) => {
             // @ts-ignore
@@ -99,32 +104,41 @@ export class Line{
         return this.container;
     }
 
+    updateMask(){
+        let w = this.sprite.width;
+        let h = this.sprite.height;
+        let pos = this.sprite.position;
+        let mark = '';
+        if(this.mark == '')
+        {
+            mark = StatusManager.get().getHoverZone();
+        }
+        else
+        {
+            mark = this.mark;
+        }
+        let color = EditorUtils.getColor(mark);
+        this.rectMask.lineStyle({
+            alpha:0
+        })
+        this.rectMask.destroy();
+        this.rectMask = new PIXI.Graphics()
+        this.rectMask.beginFill(color,maskAlpha);
+        this.rectMask.drawRect(0,0,w,h);
+        this.rectMask.endFill();
+        this.rectMask.position.set(pos.x,pos.y);
+        this.rectMask.zIndex = 5;
+        this.container.addChild(this.rectMask);
+    }
+
     createDashBox(w: number, h:number){
         this.box.destroy();
         let x = this.sprite.position.x;
         let y = this.sprite.position.y;
-        let color = 0xb1b1b1;
-        switch(this.mark)
-        {
-            case 'zone1':
-                {
-                    color = 0xff5436;
-                    break;
-                }
-            case 'zone2': 
-                {
-                    color = 0xa999ff;
-                    break;
-                }
-            case 'zone3':
-                {
-                    color = 0x0acca2;
-                    break;
-                }
-        }
+        let color = EditorUtils.getColor(this.mark);
         let style = {
             width: 1,
-            color: color,
+            color: Math.random() * 0xffffff,
             alpha: 0.8,
         }
         this.box = PixiGraphics.get().drawDashRectangle(0,0,w,h,style);
@@ -141,6 +155,7 @@ export class Line{
 
         this.createDashBox(linew2,lineh2);
 
+        this.updateMask();
         if(data)
         {
             let position: PIXI.IPointData = data.position
@@ -168,6 +183,7 @@ export class Line{
     translate(x: number, y:number){
         this.sprite.position.set(x,y);
         this.box.position.set(x,y);
+        this.rectMask.position.set(x,y);
     }
 
     get position(): PIXI.IPointData{

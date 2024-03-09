@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { PixiGraphics } from './PixiGraphics';
 import { StatusManager } from './StatusManager';
+import { EditorUtils } from './EditorUtils';
 
 const showAlpha = 1;
 const hideAlpha = 0;
@@ -128,26 +129,7 @@ export class Zone{
 
     createText(): PIXI.Text{
 
-        let color = '#b1b1b1'
-
-        switch(this.mark)
-        {
-            case 'zone1':
-                {
-                    color = '#ff5436'
-                    break;
-                }
-            case 'zone2':
-                {
-                    color = '#a999ff'
-                    break;
-                }
-            case 'zone3':
-                {
-                    color = '#0acca2';
-                    break;
-                }
-        }
+        let color = EditorUtils.getColorString(this.mark);
         const style = {
             fontSize: 13,
             fill: color
@@ -187,21 +169,18 @@ export class Zone{
     getZoneInfo():info{
         let s = [0, 0];
         let p = [0, 0];
-        let c = 0xb1b1b1;
+        let c = EditorUtils.getColor(this.mark);
         if (this.mark == 'zone1') {
             p = [80, 0];
             s = [80, 50];
-            c = color1;
         }
         else if (this.mark == 'zone2') {
             p = [0, 50];
             s = [80, 50];
-            c = color2;
         }
         else if (this.mark == 'zone3') {
             p = [0, 300];
             s = [80, 80];
-            c = color3;
         }
         return {size: [s[0],s[1]], pivot: [p[0], p[1]], color: c};
     }
@@ -209,17 +188,14 @@ export class Zone{
     getRangeInfo():info{
         let s = [400, 400];
         let p = [0, 0];
-        let c = 0xb1b1b1;
+        let c = EditorUtils.getColor(this.mark);
         if (this.mark == 'zone1') {
-            c = color1;
             p = [200 + 80, 200];
         }
         else if (this.mark == 'zone2') {
-            c = color2;
             p = [200, 200];
         }
         else if (this.mark == 'zone3') {
-            c = color3;
             p = [200, 200 + 300];
         }
         return {size: [s[0],s[1]], pivot: [p[0], p[1]], color: c};

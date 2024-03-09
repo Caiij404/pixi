@@ -96,7 +96,7 @@ export class Line{
         this.container.on('pointerup',this.pointerUp);
         // @ts-ignore
         this.container.on('pointerupoutside',this.pointerUp)
-        
+
         EditorService.get().getStage().addChild(this.container);
     }
 
@@ -129,6 +129,18 @@ export class Line{
         this.rectMask.position.set(pos.x,pos.y);
         this.rectMask.zIndex = 5;
         this.container.addChild(this.rectMask);
+    }
+
+    setMaskVisible(show: boolean)
+    {
+        if(show)
+        {
+            this.rectMask.alpha = maskAlpha;
+        }
+        else
+        {
+            this.rectMask.alpha = 0;
+        }
     }
 
     createDashBox(w: number, h:number){

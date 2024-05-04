@@ -1,61 +1,70 @@
-import * as PIXI from 'pixi.js';
+import { EditorService } from "./EditorService";
 import { Line } from "./Line";
-
-// LineManager 不需要lines数组，因为剖面编辑也就3个区域，在画布中最多也就三个线条
-// 那对应的zone也就只需要三个，其实可以另外写成一个manager，会方便些吧
 
 export class LineManager{
     private static instance: LineManager;
-    private stage: PIXI.Container<PIXI.DisplayObject> | undefined
-    private lines: Line[] = [];
+    private line1: Line | undefined;
+    private line2: Line | undefined;
+    private line3: Line | undefined;
+
     private constructor(){
+
     }
-    
-    public static get(): LineManager
-    {
-        if(!this.instance)
-        {
+
+    public static get():LineManager{
+        if(!this.instance){
             this.instance = new LineManager();
         }
         return this.instance;
     }
 
-    public initStage(stage: PIXI.Container<PIXI.DisplayObject>)
-    {
-        this.stage = stage;
+    createLine():Line{
+        return new Line();
     }
 
-    createLine(): Line
-    {
-        let line = new Line();
-        this.addLine(line);
-        return line;
-    }
-
-    cancelCreate(line: Line)
-    {
-        this.deleteLine(line.id);
-    }
-
-    addLine(l: Line)
-    {
-        this.lines.push(l);
-        if(this.stage)
+    confirmCreate(line: Line, zone: string){
+        let data: any = {}
+        let hasLine = false;
+        let stage = EditorService.get().getStage();
+        switch(zone)
         {
-            this.stage.addChild(l.getSprite());
-        }
-    }
-
-    deleteLine(id: string)
-    {
-        for(let i=0; i<this.lines.length; ++i)
-        {
-            if(this.lines[i].id === id && !this.lines[i].destroyed)
+            case 'zone1':
             {
-                this.lines[i].destroy();
-                this.lines.splice(i,1);
+                if(this.line1)
+                {
+                    hasLine = true;
+                    data.position = this.line1.position;
+                    this.line1.destroy();
+                }
+                break;
+            }
+            case 'zone2':
+            {
+                if(this.line2)
+                {
+                    hasLine = true;
+                    data.position = this.line2.position;
+                    this.line2.destroy();
+                }
+                break;
+            }
+            case 'zone3':
+            {
+                if(this.line3)
+                {
+                    hasLine = true;
+                    data.position = this.line3.position;
+                    this.line3.destroy();
+                }
+                break;
             }
         }
+        
+        line.confirmCreate(zone, hasLine ? data : undefined);
+        
+    }
+
+    cancelCreate(line: Line){
+        line.destroy();
     }
 }
-

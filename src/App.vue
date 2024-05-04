@@ -4,51 +4,101 @@
 </template>
 
 <script setup lang="ts">
-// import * as PIXI from "pixi.js"
-// import {addHitArea, createGraphics, createLine, sweepHeight} from './function'
-// const app = new PIXI.Application({
+
+import { SweepEditorUI } from "./SweepEditorUI";
+SweepEditorUI.get();
+
+// import * as PIXI from 'pixi.js'
+// import { PixiGraphics } from './PixiGraphics';
+// let app = new PIXI.Application({
+// 	antialias: true,
 // 	width: window.innerWidth,
 // 	height: window.innerHeight,
 // 	backgroundColor: 0xffffff,
-// 	resolution: window.devicePixelRatio | 1,
-// 	resizeTo: window,
-// });
-
-// const test = new PIXI.Sprite();
-// test.on
-
-import { SweepEditorUI } from "./SweepEditorUI";
-
+// })
 // document.body.appendChild(app.view as any);
 
-// app.stage.position.set(window.innerWidth / 2, window.innerHeight / 2);
+// let sprite = new PIXI.Sprite(PIXI.Texture.from('./line.jpg'));
+// // sprite.scale.set(0.1,0.2);
+// sprite.width = 31;
+// sprite.height = 76;
+// sprite.position.set(0,0);
+// sprite.eventMode = 'static';
+// // sprite.anchor.set(0.5);
+// // sprite.interactive = true;
+// sprite.zIndex = 3
 
-// window.addEventListener('wheel',(e)=>{
-// 	const step = e.deltaY < 0 ? 0.03 : -0.03;
-// 	if(app.stage.scale.x + step >= 0.03)
-// 	{
-// 		app.stage.scale.x += step;
-// 		app.stage.scale.y += step;
+// // dashZone
+// let style = {
+// 	width: 2,
+// 	color: 0xff5436,
+// 	alpha: 0.6,
+// }
+// let dashZone = PixiGraphics.get().drawDashRectangle(100,100,400,400,style);
+// app.stage.addChild(dashZone as any);
+
+// let spriteDashBox = PixiGraphics.get().drawDashRectangle(0,0,31,76,style);
+// spriteDashBox.zIndex = 2
+
+// let container = new PIXI.Container();
+// container.sortableChildren = true;
+// container.addChild(sprite as any);
+// container.addChild(spriteDashBox as any);
+// app.stage.addChild(container as any);
+
+// let minx = 100;
+// let maxx = 500;
+// let miny = 100;
+// let maxy = 500;
+
+// let globalMouseMove = (e: any) => {
+// 	let mouseX = e.data.global.x;
+// 	let mouseY = e.data.global.y;
+// 	if(mouseX < minx){
+// 		mouseX = minx;
 // 	}
-// });
+// 	if(mouseX > maxx - container.width){
+// 		mouseX = maxx - container.width;
+// 	} 
+		
+// 	if(mouseY < miny) {
+// 		mouseY = miny;
+// 	}
+// 	if(mouseY > maxy - container.height){
+// 		mouseY = maxy - container.height;
+// 	} 
+// 	container.position.set(mouseX, mouseY);
+// }
 
-// // 画图形
-// createGraphics(app.stage);
+// let pointerDown = () => {
+// 	container.addEventListener('globalmousemove',globalMouseMove);
+// 	console.log('down');
+// }
 
-// // 画数字
-// sweepHeight(app.stage, 200);
+// let pointerUp = ()=>{
+// 	container.removeEventListener('globalmousemove',globalMouseMove);
+// 	console.log('up')
+// }
 
-// // 区域
-// addHitArea(app.stage);
+// // container.pivot.set(container.width / 2, container.height / 2)
+// container.eventMode = 'static'
+// container.on('pointerdown',pointerDown).on('pointerup',pointerUp).on('pointerupoutside',pointerUp);
+// container.position.set(100,100)
 
-SweepEditorUI.get();
 
-// createLine(app.stage);
+
 // window.addEventListener('keydown',(e)=>{
-// 	if(e.key == '8')
+// 	if(e.key == '3')
 // 	{
-// 		createLine(app.stage);
+// 		// spriteDashBox.alpha = 0.3
+// 		spriteDashBox.line.color = 0xff0000;
 // 	}
+// 	else if(e.key == '4')
+// 	{
+// 		// spriteDashBox.alpha = 1;
+// 		spriteDashBox.line.color = 0x00ff00;
+// 	}
+// 	console.log(container.width, '   ', container.height);
 // })
 
 
@@ -59,19 +109,6 @@ document.addEventListener('contextmenu',(e)=>{
 </script>
 
 <style>
-/* .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-} */
-
 * {
 	margin: 0;
 	padding: 0;

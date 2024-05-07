@@ -23,8 +23,11 @@ export class EditorService
         return this.stage;
     }
 
+    public setStage(s: PIXI.Container){
+        this.stage = s;
+    }
+
     public initApp(a: PIXI.Application){
         this.app = a;
-        this.stage = a.stage;
     }
 }

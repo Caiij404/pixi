@@ -5,8 +5,8 @@
 
 <script setup lang="ts">
 
-import { SweepEditorUI } from "./SweepEditorUI";
-SweepEditorUI.get();
+import { SectionEditorUI } from "./SectionEditorUI";
+SectionEditorUI.get();
 
 // import * as PIXI from 'pixi.js'
 // import { PixiGraphics } from './PixiGraphics';
